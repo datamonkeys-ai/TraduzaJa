@@ -15,6 +15,17 @@ final class TranslatorTests: XCTestCase {
         XCTAssertEqual(args[args.firstIndex(of: "--tools")! + 1], "")
     }
 
+    func testParseJSONWithFences() {
+        let raw = "```json\n{\"translation\": \" Olá \", \"mistakes\": [{\"wrong\": \"I has\", \"right\": \"I have\", \"why\": \"verbo\"}, {\"wrong\": \"x\", \"right\": \"x\", \"why\": \"\"}]}\n```"
+        let t = Translation.parse(raw)
+        XCTAssertEqual(t.translation, "Olá")
+        XCTAssertEqual(t.mistakes, [Mistake(wrong: "I has", right: "I have", why: "verbo")])
+    }
+
+    func testParsePlainText() {
+        XCTAssertEqual(Translation.parse("  Bom dia \n"), Translation(translation: "Bom dia"))
+    }
+
     func testMissingClaude() async {
         let t = Translator(claudePath: nil)
         do {
@@ -28,7 +39,10 @@ final class TranslatorTests: XCTestCase {
     /// Chama o claude de verdade. Rode com TRADUZA_LIVE=1 swift test
     func testLiveTranslation() async throws {
         try XCTSkipUnless(ProcessInfo.processInfo.environment["TRADUZA_LIVE"] == "1")
-        let out = try await Translator().translate("Good morning!", to: Language.find("pt")!, fallback: Language.find("en")!)
-        XCTAssertTrue(out.lowercased().contains("bom dia"), out)
+        let pt = Language.find("pt")!
+        let out = try await Translator().translate("Good morning! I has two cat.", to: pt, fallback: Language.find("en")!, explainIn: pt)
+        XCTAssertTrue(out.translation.lowercased().contains("bom dia"), out.translation)
+        XCTAssertFalse(out.mistakes.isEmpty, "devia achar 'I has' / 'two cat'")
+        print(out)
     }
 }

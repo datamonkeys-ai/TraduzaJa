@@ -23,6 +23,8 @@ struct MenuView: View {
                 Text("Opus").tag("opus")
             }
 
+            Toggle("Mostrar o que errei no topo da tela", isOn: $model.showLessons)
+
             if !model.trusted {
                 Button("Liberar Acessibilidade…") { Selection.askForPermission() }
                     .foregroundStyle(.orange)
@@ -38,6 +40,22 @@ struct MenuView: View {
                 Text(last.translated).textSelection(.enabled).lineLimit(6)
             }
 
+            if !model.lessons.isEmpty {
+                Divider()
+                HStack {
+                    Label("Para aprender", systemImage: "graduationcap").font(.subheadline.bold())
+                    Spacer()
+                    Button("Limpar") { model.lessons = [] }.buttonStyle(.link).font(.caption)
+                }
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(model.lessons) { MistakeRow(mistake: $0) }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(maxHeight: 220)
+            }
+
             Divider()
             HStack {
                 Button("Traduzir clipboard") { Task { await model.translateClipboard() } }
@@ -47,6 +65,6 @@ struct MenuView: View {
         }
         .padding(14)
         .frame(width: 300)
-        .onAppear { model.trusted = Selection.trusted }
+        .onAppear { model.trusted = Selection.trusted; model.unseen = 0 }
     }
 }

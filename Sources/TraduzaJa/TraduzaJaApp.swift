@@ -1,4 +1,7 @@
 import SwiftUI
+import os
+
+let log = Logger(subsystem: "com.louisperner.traduzaja", category: "app")
 
 @main
 struct TraduzaJaApp: App {
@@ -8,7 +11,10 @@ struct TraduzaJaApp: App {
         MenuBarExtra {
             MenuView().environmentObject(model)
         } label: {
-            Image(systemName: model.busy ? "ellipsis.bubble.fill" : "character.bubble")
+            HStack(spacing: 2) {
+                Image(systemName: model.busy ? "ellipsis.bubble.fill" : "character.bubble")
+                if model.unseen > 0 { Text("\(model.unseen)") }
+            }
         }
         .menuBarExtraStyle(.window)
     }
@@ -18,8 +24,13 @@ struct TraduzaJaApp: App {
 final class AppModel: ObservableObject {
     @AppStorage("target") var targetCode = Language.system().code
     @AppStorage("model") var claudeModel = "haiku"
+    @AppStorage("showLessons") var showLessons = true
     @Published var busy = false
     @Published var last: (original: String, translated: String)?
+    /// Erros das últimas traduções, mais recente primeiro.
+    @Published var lessons: [Mistake] = []
+    /// Contador no ícone; zera quando abre o menu.
+    @Published var unseen = 0
     @Published var error: String?
     @Published var trusted = Selection.trusted
 
@@ -35,12 +46,14 @@ final class AppModel: ObservableObject {
     }
 
     func translateSelection() async {
+        log.info("atalho (busy=\(self.busy))")
         guard !busy else { return }
         trusted = Selection.trusted
         guard trusted else { Selection.askForPermission(); return }
         guard let text = await Selection.copy(), !text.trimmingCharacters(in: .whitespaces).isEmpty else {
-            NSSound.beep(); return
+            log.info("nada copiado"); NSSound.beep(); return
         }
+        log.info("copiado \(text.count) chars")
         guard let out = await translate(text) else { return }
         Selection.paste(out)
     }
@@ -56,9 +69,15 @@ final class AppModel: ObservableObject {
         busy = true; error = nil
         defer { busy = false }
         do {
-            let out = try await Translator(model: claudeModel).translate(text, to: target, fallback: fallback)
-            last = (text, out)
-            return out
+            let t = try await Translator(model: claudeModel).translate(text, to: target, fallback: fallback, explainIn: target)
+            last = (text, t.translation)
+            log.info("traduzido, \(t.mistakes.count) erros")
+            if !t.mistakes.isEmpty {
+                lessons = Array((t.mistakes + lessons.filter { !t.mistakes.contains($0) }).prefix(30))
+                unseen += t.mistakes.count
+                if showLessons { LessonPanel.shared.show(t.mistakes) }
+            }
+            return t.translation
         } catch {
             self.error = error.localizedDescription
             NSSound.beep()
