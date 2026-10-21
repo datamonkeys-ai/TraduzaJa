@@ -1,0 +1,27 @@
+# TraduzaJa — projeto Xcode gerado (make xcodeproj). Este arquivo é a verdade.
+name: TraduzaJa
+options:
+  bundleIdPrefix: com.louisperner
+  developmentLanguage: pt-BR
+  deploymentTarget:
+    macOS: "14.0"
+settings:
+  base:
+    DEVELOPMENT_TEAM: 886XWSBVN5
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_CFBundleDisplayName: TraduzaJa
+    INFOPLIST_KEY_LSUIElement: YES
+    ENABLE_HARDENED_RUNTIME: YES
+targets:
+  TraduzaJa:
+    type: application
+    platform: macOS
+    sources: [Sources/TraduzaCore, Sources/TraduzaJa]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.louisperner.traduzaja
+    scheme: {}
