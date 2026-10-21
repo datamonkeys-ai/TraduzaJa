@@ -11,7 +11,7 @@ struct MenuView: View {
                 if model.busy { ProgressView().controlSize(.small) }
             }
 
-            Text("Selecione um texto e aperte ⌘⇧⌥↩")
+            Text("Selecione um texto e aperte ⌃⇧T")
                 .font(.callout).foregroundStyle(.secondary)
 
             Picker("Traduzir para", selection: $model.targetCode) {

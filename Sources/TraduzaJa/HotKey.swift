@@ -6,9 +6,9 @@ final class HotKey {
     private var handler: EventHandlerRef?
     private let action: () -> Void
 
-    /// Padrão: ⌘⇧⌥↩
-    init(keyCode: UInt32 = UInt32(kVK_Return),
-         modifiers: UInt32 = UInt32(cmdKey | shiftKey | optionKey),
+    /// Padrão: ⌃⇧T (⌘⇧T é "reabrir aba" nos navegadores)
+    init(keyCode: UInt32 = UInt32(kVK_ANSI_T),
+         modifiers: UInt32 = UInt32(controlKey | shiftKey),
          action: @escaping () -> Void) {
         self.action = action
         var spec = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))

@@ -14,9 +14,14 @@ enum Selection {
     /// Texto selecionado, ou nil se nada mudou no clipboard.
     static func copy() async -> String? {
         let pb = NSPasteboard.general
+        // Espera soltar ⌃⇧ do atalho (até ~600 ms), senão o app recebe ⌃⇧⌘C
+        for _ in 0..<30 where !CGEventSource.flagsState(.combinedSessionState)
+            .intersection([.maskControl, .maskShift, .maskAlternate, .maskCommand]).isEmpty {
+            try? await Task.sleep(for: .milliseconds(20))
+        }
         let before = pb.changeCount
         press(key: 8) // C
-        for _ in 0..<20 { // até ~400 ms
+        for _ in 0..<40 { // até ~800 ms
             try? await Task.sleep(for: .milliseconds(20))
             if pb.changeCount != before { return pb.string(forType: .string) }
         }
@@ -31,10 +36,8 @@ enum Selection {
     }
 
     private static func press(key: CGKeyCode) {
+        // Os modificadores do atalho já foram soltos em copy()
         let src = CGEventSource(stateID: .combinedSessionState)
-        // Solta ⇧⌥ que ainda estão apertados do atalho, senão vira ⌘⇧⌥C
-        src?.setLocalEventsFilterDuringSuppressionState([.permitLocalMouseEvents, .permitSystemDefinedEvents],
-                                                        state: .eventSuppressionStateSuppressionInterval)
         for down in [true, false] {
             let e = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: down)
             e?.flags = .maskCommand

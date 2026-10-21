@@ -1,6 +1,6 @@
 # TraduzaJa (nativo)
 
-App de barra de menus para macOS: selecione um texto em qualquer app, aperte **⌘⇧⌥↩**, e ele é trocado pela tradução.
+App de barra de menus para macOS: selecione um texto em qualquer app, aperte **⌃⇧T**, e ele é trocado pela tradução.
 A tradução usa o Claude Code (`claude -p`) com o seu login, sem API key.
 
 - `make run`: compila, instala em /Applications e abre
