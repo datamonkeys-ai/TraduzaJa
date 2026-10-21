@@ -11,10 +11,13 @@ struct MenuView: View {
                 if model.busy { ProgressView().controlSize(.small) }
             }
 
-            Text("Selecione um texto e aperte ⌃⇧T")
-                .font(.callout).foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("⌃⇧T  traduz a seleção (inglês ↔ \(model.target.label))")
+                Text("⌃⇧G  corrige a gramática da linha ou seleção")
+            }
+            .font(.callout).foregroundStyle(.secondary)
 
-            Picker("Traduzir para", selection: $model.targetCode) {
+            Picker("Meu idioma", selection: $model.targetCode) {
                 ForEach(Language.all) { Text($0.label).tag($0.code) }
             }
             Picker("Modelo", selection: $model.claudeModel) {

@@ -45,4 +45,12 @@ final class TranslatorTests: XCTestCase {
         XCTAssertFalse(out.mistakes.isEmpty, "devia achar 'I has' / 'two cat'")
         print(out)
     }
+
+    func testLiveCorrection() async throws {
+        try XCTSkipUnless(ProcessInfo.processInfo.environment["TRADUZA_LIVE"] == "1")
+        let out = try await Translator().correct("She dont like apples.", explainIn: Language.find("pt")!)
+        XCTAssertTrue(out.translation.contains("doesn't") || out.translation.contains("does not"), out.translation)
+        XCTAssertFalse(out.mistakes.isEmpty)
+        print(out)
+    }
 }

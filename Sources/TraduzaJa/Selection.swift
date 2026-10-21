@@ -28,6 +28,16 @@ enum Selection {
         return nil
     }
 
+    /// Seleção atual; se não houver, seleciona a linha onde está o cursor (⌘← e ⌘⇧→).
+    static func copyOrSelectLine() async -> String? {
+        if let text = await copy(), !text.trimmingCharacters(in: .whitespaces).isEmpty { return text }
+        press(key: 123) // ←
+        try? await Task.sleep(for: .milliseconds(40))
+        press(key: 124, flags: [.maskCommand, .maskShift]) // →
+        try? await Task.sleep(for: .milliseconds(60))
+        return await copy()
+    }
+
     static func paste(_ text: String) {
         let pb = NSPasteboard.general
         pb.clearContents()
@@ -35,12 +45,12 @@ enum Selection {
         press(key: 9) // V
     }
 
-    private static func press(key: CGKeyCode) {
+    private static func press(key: CGKeyCode, flags: CGEventFlags = .maskCommand) {
         // Os modificadores do atalho já foram soltos em copy()
         let src = CGEventSource(stateID: .combinedSessionState)
         for down in [true, false] {
             let e = CGEvent(keyboardEventSource: src, virtualKey: key, keyDown: down)
-            e?.flags = .maskCommand
+            e?.flags = flags
             e?.post(tap: .cghidEventTap)
         }
     }
