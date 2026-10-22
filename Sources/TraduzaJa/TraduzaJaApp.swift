@@ -54,6 +54,7 @@ final class AppModel: ObservableObject {
             HotKey(id: 5, keyCode: kVK_ANSI_E) { [weak self] in Task { await self?.explainSelection() } },
         ]
         if !trusted { Selection.askForPermission() }
+        ScreenPrivacy.install()
     }
 
     // MARK: - Atalhos

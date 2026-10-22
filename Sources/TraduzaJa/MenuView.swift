@@ -31,6 +31,8 @@ struct MenuView: View {
             }
 
             Toggle("Mostrar o que errei no topo da tela", isOn: $model.showLessons)
+            Toggle("Esconder do compartilhamento de tela", isOn: Binding(
+                get: { ScreenPrivacy.hidden }, set: { ScreenPrivacy.hidden = $0 }))
             Toggle("Abrir quando o Mac ligar", isOn: Binding(
                 get: { model.openAtLogin }, set: { model.setOpenAtLogin($0) }))
 
@@ -76,7 +78,7 @@ struct MenuView: View {
         }
         .padding(14)
         .frame(width: 320)
-        .onAppear { model.trusted = Selection.trusted; model.unseen = 0 }
+        .onAppear { model.trusted = Selection.trusted; model.unseen = 0; ScreenPrivacy.applyAll() }
     }
 
     private func shortcut(_ keys: String, _ what: String) -> some View {

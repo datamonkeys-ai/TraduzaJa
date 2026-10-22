@@ -14,6 +14,7 @@ final class ReviewWindow {
             w.title = "Revisar meus erros"
             w.isReleasedWhenClosed = false
             w.center()
+            ScreenPrivacy.apply(w)
             window = w
         }
         window?.contentView = NSHostingView(rootView: ReviewView(queue: model.history.reviewQueue())

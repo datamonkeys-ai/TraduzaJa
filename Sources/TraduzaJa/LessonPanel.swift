@@ -43,6 +43,7 @@ final class LessonPanel {
             let f = screen.visibleFrame
             p.setFrameOrigin(NSPoint(x: f.midX - host.frame.width / 2, y: f.maxY - host.frame.height - 8))
         }
+        ScreenPrivacy.apply(p)
         p.alphaValue = 0
         p.orderFrontRegardless()
         NSAnimationContext.runAnimationGroup { $0.duration = 0.2; p.animator().alphaValue = 1 }
