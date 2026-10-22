@@ -11,11 +11,15 @@ struct MenuView: View {
                 if model.busy { ProgressView().controlSize(.small) }
             }
 
-            VStack(alignment: .leading, spacing: 2) {
-                Text("⌃⇧T  traduz a seleção (inglês ↔ \(model.target.label))")
-                Text("⌃⇧G  corrige a gramática da linha ou seleção")
+            Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 2) {
+                shortcut("⌃⇧T", "traduz (inglês ↔ \(model.target.label))")
+                shortcut("⌃⇧G", "corrige a gramática")
+                shortcut("⌃⇧F", "deixa mais formal")
+                shortcut("⌃⇧C", "deixa mais casual")
+                shortcut("⌃⇧E", "explica a frase")
             }
             .font(.callout).foregroundStyle(.secondary)
+            Text("Sem seleção, G/F/C usam a linha do cursor.").font(.caption2).foregroundStyle(.tertiary)
 
             Picker("Meu idioma", selection: $model.targetCode) {
                 ForEach(Language.all) { Text($0.label).tag($0.code) }
@@ -27,6 +31,8 @@ struct MenuView: View {
             }
 
             Toggle("Mostrar o que errei no topo da tela", isOn: $model.showLessons)
+            Toggle("Abrir quando o Mac ligar", isOn: Binding(
+                get: { model.openAtLogin }, set: { model.setOpenAtLogin($0) }))
 
             if !model.trusted {
                 Button("Liberar Acessibilidade…") { Selection.askForPermission() }
@@ -43,20 +49,22 @@ struct MenuView: View {
                 Text(last.translated).textSelection(.enabled).lineLimit(6)
             }
 
-            if !model.lessons.isEmpty {
+            if !model.history.lessons.isEmpty {
                 Divider()
                 HStack {
-                    Label("Para aprender", systemImage: "graduationcap").font(.subheadline.bold())
+                    Label("Para aprender (\(model.history.lessons.count))", systemImage: "graduationcap")
+                        .font(.subheadline.bold())
                     Spacer()
-                    Button("Limpar") { model.lessons = [] }.buttonStyle(.link).font(.caption)
+                    Button("Revisar") { ReviewWindow.shared.show(model: model) }.font(.caption)
+                    Button("Limpar") { model.clearLessons() }.buttonStyle(.link).font(.caption)
                 }
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
-                        ForEach(model.lessons) { MistakeRow(mistake: $0) }
+                        ForEach(model.history.lessons.prefix(30)) { MistakeRow(mistake: $0.mistake) }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .frame(maxHeight: 220)
+                .frame(maxHeight: 200)
             }
 
             Divider()
@@ -67,7 +75,14 @@ struct MenuView: View {
             }
         }
         .padding(14)
-        .frame(width: 300)
+        .frame(width: 320)
         .onAppear { model.trusted = Selection.trusted; model.unseen = 0 }
+    }
+
+    private func shortcut(_ keys: String, _ what: String) -> some View {
+        GridRow {
+            Text(keys).monospaced().foregroundStyle(.primary)
+            Text(what)
+        }
     }
 }

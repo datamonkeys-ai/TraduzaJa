@@ -11,12 +11,21 @@ final class LessonPanel {
     private var hideTask: Task<Void, Never>?
 
     func show(_ mistakes: [Mistake], seconds: Double = 12) {
+        present(LessonCard(mistakes: mistakes, onClose: close, onHover: hover), seconds: seconds)
+    }
+
+    /// Cartão de texto livre (explicação da frase).
+    func showText(title: String, body: String, seconds: Double = 20) {
+        present(TextCard(title: title, text: body, onClose: close, onHover: hover), seconds: seconds)
+    }
+
+    private var close: () -> Void { { [weak self] in self?.hide() } }
+    private var hover: (Bool) -> Void {
+        { [weak self] inside in if inside { self?.hideTask?.cancel() } else { self?.scheduleHide(after: 4) } }
+    }
+
+    private func present<V: View>(_ view: V, seconds: Double) {
         hide()
-        let view = LessonCard(mistakes: mistakes,
-                              onClose: { [weak self] in self?.hide() },
-                              onHover: { [weak self] inside in
-                                  if inside { self?.hideTask?.cancel() } else { self?.scheduleHide(after: 4) }
-                              })
         let host = NSHostingView(rootView: view)
         host.frame.size = host.fittingSize
 
@@ -79,6 +88,29 @@ struct LessonCard: View {
         }
         .padding(14)
         .frame(width: 420)
+        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+        .onHover(perform: onHover)
+    }
+}
+
+struct TextCard: View {
+    let title: String
+    let text: String
+    var onClose: () -> Void
+    var onHover: (Bool) -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .firstTextBaseline) {
+                Label(title, systemImage: "lightbulb.fill").font(.headline).lineLimit(2)
+                Spacer()
+                Button(action: onClose) { Image(systemName: "xmark.circle.fill") }
+                    .buttonStyle(.plain).foregroundStyle(.secondary)
+            }
+            Text(text).fixedSize(horizontal: false, vertical: true).textSelection(.enabled)
+        }
+        .padding(14)
+        .frame(width: 440)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
         .onHover(perform: onHover)
     }
