@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#17171B"/>
+      <stop offset="1" stop-color="#26262D"/>
+    </linearGradient>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="420" rx="28" fill="url(#g)"/>
+  <circle cx="1080" cy="60" r="220" fill="#F7C948" opacity="0.06"/>
+
+  <!-- menu bar -->
+  <rect x="0" y="0" width="1200" height="34" rx="28" fill="#0E0E11"/>
+  <rect x="0" y="20" width="1200" height="14" fill="#0E0E11"/>
+  <text x="1060" y="23" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="15" fill="#F7C948" font-weight="700">A文</text>
+  <text x="1100" y="23" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" fill="#9A9AA3">14:32</text>
+
+  <!-- before -->
+  <g filter="url(#sh)">
+    <rect x="70" y="100" width="420" height="190" rx="18" fill="#2E2E36"/>
+  </g>
+  <text x="100" y="140" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" fill="#8C8C96" letter-spacing="2">ANY APP</text>
+  <rect x="100" y="162" width="316" height="34" rx="6" fill="#F7C948" opacity="0.22"/>
+  <text x="104" y="186" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="24" fill="#FFFFFF">The meeting moved to Friday.</text>
+  <text x="104" y="226" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="24" fill="#5E5E68">Can you confirm?</text>
+
+  <!-- key -->
+  <g filter="url(#sh)">
+    <rect x="530" y="160" width="140" height="70" rx="16" fill="#F7C948"/>
+  </g>
+  <text x="600" y="205" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="34" font-weight="700" fill="#1B1B1F" text-anchor="middle">⌃⇧T</text>
+  <path d="M500 195h20M680 195h20" stroke="#F7C948" stroke-width="4" stroke-linecap="round"/>
+  <path d="M694 186l12 9-12 9" fill="none" stroke="#F7C948" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- after -->
+  <g filter="url(#sh)">
+    <rect x="710" y="100" width="420" height="190" rx="18" fill="#2E2E36"/>
+  </g>
+  <text x="740" y="140" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="14" fill="#8C8C96" letter-spacing="2">REPLACED IN PLACE</text>
+  <text x="744" y="186" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="24" fill="#FFFFFF">A reunião mudou para sexta.</text>
+  <text x="744" y="226" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="24" fill="#5E5E68">Can you confirm?</text>
+
+  <!-- footer -->
+  <text x="600" y="345" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="30" font-weight="700" fill="#FFFFFF" text-anchor="middle">Select. Press. Done.</text>
+  <text x="600" y="380" font-family="-apple-system, Helvetica Neue, Arial, sans-serif" font-size="17" fill="#9A9AA3" text-anchor="middle">No API key. Runs on Claude Code with the login you already have.</text>
+</svg>
