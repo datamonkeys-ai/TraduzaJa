@@ -8,4 +8,6 @@ install: build
 	rm -rf /Applications/TraduzaJa.app && cp -R $(APP) /Applications/
 run: install
 	open /Applications/TraduzaJa.app
-.PHONY: test xcodeproj build install run
+# Release assinada (Developer ID) + notarizada em dist/TraduzaJa-<versão>-mac.zip
+release: ; scripts/release.sh
+.PHONY: test xcodeproj build install run release
